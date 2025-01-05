@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drug Checker</title>
+    <style>
+        body {
+            display: grid;
+            grid-template-rows: repeat(1fr, 12);
+            margin: 0;
+            height: 100vh;
+            background-color: rgba(230, 2, 2, 0.616);
+            color: antiquewhite;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .header, .body, .footer {
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: aliceblue;
+            color: black;
+        }
+        .footer {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>Drug Checker</div>
+        <p>Check before you swallow</p>
+    </div>
+    <div class="body">
+        <label for="drugName">Drug:</label>
+        <input type="text" id="drugName">
+        <button onclick="checkDrug()">Check Drug Interactions</button>
+        <div id="result"></div>
+        <br>
+        <label for="drug1">Drug 1:</label>
+        <input type="text" id="drug1">
+        <label for="drug2">Drug 2:</label>
+        <input type="text" id="drug2">
+        <button onclick="checkTwoDrugs()">Check Interaction Between Two Drugs</button>
+        <div id="resultTwo"></div>
+    </div>
+    <div class="footer">
+        <p>Copyright belongs to group 5</p>
+    </div>
+
+    <script>
+       function checkDrug() {
+    const drug = document.getElementById("drugName").value;
+    fetch(`/find_interaction?drug=${drug}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status} - ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById("result").innerText = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            console.error("Error fetching interaction data:", error);
+            document.getElementById("result").innerText = "Error fetching data. Check console.";
+        });
+}
+
+function checkTwoDrugs() {
+    const drug1 = document.getElementById("drug1").value;
+    const drug2 = document.getElementById("drug2").value;
+    fetch(`/check_two_drugs?drug1=${drug1}&drug2=${drug2}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status} - ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById("resultTwo").innerText = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            console.error("Error fetching interaction data between two drugs:", error);
+            document.getElementById("resultTwo").innerText = "Error fetching data. Check console.";
+        });
+}
+
+    </script>
+</body>
+</html>
